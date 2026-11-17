@@ -1,0 +1,47 @@
+/* =========================================================
+   ANIMASI ENTRANCE
+   - [data-animate]  : muncul saat di-scroll (IntersectionObserver di main.js)
+   - .hero-in        : muncul saat halaman pertama dibuka
+   - data-delay="200": jeda dalam milidetik
+   ========================================================= */
+
+:root { --dur: .9s; --ease: cubic-bezier(.2, .7, .2, 1); }
+
+/* ---- State awal (hanya jika JS aktif, supaya tanpa JS konten tetap tampil) ---- */
+.js [data-animate],
+.js .hero-in {
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease), clip-path calc(var(--dur) * 1.5) var(--ease);
+  transition-delay: var(--delay, 0ms);
+  will-change: opacity, transform;
+}
+.js [data-animate="fade-up"],   .js .hero-in[data-from="up"]    { transform: translateY(32px); }
+.js [data-animate="fade-down"], .js .hero-in[data-from="down"]  { transform: translateY(-20px); }
+.js [data-animate="fade-left"], .js .hero-in[data-from="left"]  { transform: translateX(-48px); }
+.js [data-animate="fade-right"],.js .hero-in[data-from="right"] { transform: translateX(48px); }
+.js [data-animate="zoom"],      .js .hero-in[data-from="zoom"]  { transform: scale(.9); }
+.js .hero-in[data-from="arch"] { opacity: 1; clip-path: inset(100% 0 0 0); transform: scale(1.06); }
+
+/* ---- State akhir ---- */
+.js [data-animate].is-visible,
+.js .hero-in.is-visible {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 0 0);
+}
+
+/* ---- Animasi berulang ---- */
+@keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes pulseRing { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,.55); } 100% { box-shadow: 0 0 0 22px rgba(255,255,255,0); } }
+.animate-float { animation: floatY 5s ease-in-out infinite; }
+.animate-pulse-ring { animation: pulseRing 1.8s ease-out infinite; }
+
+/* ---- Transisi ganti slide hero ---- */
+.hero-slide { transition: opacity .8s var(--ease), transform 1.2s var(--ease); }
+.hero-slide:not(.active) { opacity: 0; transform: scale(1.04); }
+
+/* ---- Hormati pengguna yang mematikan animasi ---- */
+@media (prefers-reduced-motion: reduce) {
+  .js [data-animate], .js .hero-in { opacity: 1 !important; transform: none !important; clip-path: none !important; transition: none !important; }
+  .animate-float, .animate-pulse-ring { animation: none !important; }
+}
